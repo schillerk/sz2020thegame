@@ -1,24 +1,20 @@
-# import time
-# import RPi.GPIO as GPIO
-
-# lp = 4
-# bp = 17
-
-# print "hey"
-
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setup(lp, GPIO.OUT)
-# # GPIO.setup(bp, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-# while True:
-# 	GPIO.output(bp, True)
+from flask import Flask
 
 from time import sleep
 import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(4, GPIO.OUT)
-GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+app = Flask(__name__)
 
-while True:
-	GPIO.output(4, GPIO.input(17))
-	sleep(.1)
+@app.route("/")
+
+def home():
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(4, GPIO.OUT)
+	GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+	# while True:
+	# 	GPIO.output(4, GPIO.input(17))
+	# 	sleep(.1)
+	return GPIO.input(17)
+
+app.run(host='0.0.0.0')
