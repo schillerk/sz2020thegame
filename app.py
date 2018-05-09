@@ -18,7 +18,7 @@ print 'hello world'
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
-GPIO.setup(bp, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 while True:
 	GPIO.output(4, GPIO.input(17))
