@@ -12,12 +12,14 @@
 # while True:
 # 	GPIO.output(bp, True)
 
-import time
+from time import sleep
 import RPi.GPIO as GPIO
+print 'hello world'
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
+GPIO.setup(bp, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 while True:
-	GPIO.output(4, True)
-	time.sleep(.5)
-	GPIO.output(4, False)
+	GPIO.output(4, GPIO.input(17))
+	sleep(.1)
