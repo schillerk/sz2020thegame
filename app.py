@@ -20,6 +20,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+print GPIO.input(17)
 while True:
 	GPIO.output(4, GPIO.input(17))
 	sleep(.1)
