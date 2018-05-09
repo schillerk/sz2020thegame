@@ -15,6 +15,6 @@ def home():
 	# while True:
 	# 	GPIO.output(4, GPIO.input(17))
 	# 	sleep(.1)
-	return GPIO.input(17)
+	return str(GPIO.input(17))
 
 app.run(host='0.0.0.0')
