@@ -8,6 +8,6 @@ print "hey"
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(lp, GPIO.OUT)
-GPIO.setup(bp, GPIO.IO, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(bp, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 while True:
 	GPIO.output(bp, True)
