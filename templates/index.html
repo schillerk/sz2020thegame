@@ -1,0 +1,94 @@
+<html>
+	<head>
+<!-- 	<script type="text/javascript">
+		function httpGetAsyc(theUrl, callback) {
+			varxmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = function() {
+				if (sml.readyState == 4 && xmlHttp.status == 200) {
+					callback(xmlHttp.responseText);
+				}
+			}
+			xmlHttp.open("GET", theUrl, true);
+			xmlHttp.send(null);
+		}
+	</script> -->
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+	    var socket = io.connect('http://' + document.domain + ':' + location.port);
+	    socket.on('connect', function() {
+	        socket.emit('my event', {data: 'I\'m connected!'});
+	    });
+	</script>
+	</head>
+	<body>
+		<div id="myElement">
+			Hello, world!
+		</div>
+	</body>
+</html>
+
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/gauge.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+        <script src="{{ url_for('static', filename='fonts/digital-7-mono.ttf') }}"></script>
+
+        <!-- <script src="https://rawgit.com/Mikhus/canv-gauge/master/gauge.min.js"></script> -->
+
+        <!-- Place favicon.ico in the root directory -->
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <!-- Add your site or application content here -->
+        <div class="jumbotron">
+          <div class="container">
+            <h1>SPEED + RPM Meter!</h1>
+            <h2>Python + JSON</h2>
+          </div>
+        </div>
+
+        <div class="container">
+            <!-- Example row of columns -->
+            <div class="row">
+            <div class="col-md-4">
+              <h1>START: <span class="label label-info" id='start'></h1>
+              <!--  {{ 'ON' if switch else 'OFF'}} originally in <h2> above-->
+            </div>
+          </div>
+        </div>
+
+        <script>
+                  $(document).ready(function(){
+
+                  function updateThing(thingState){
+                    $('#start').text(thingState.speed.toFixed(4))
+                  };
+
+                  //set up switch server sent event endpoint !!! these are the final data ready to be sent
+                  var thingSource = new EventSource("{{ url_for('thing')}}");
+                  thingSource.onmessage = function(e) {
+                  var data = $.parseJSON(e.data);
+                  updateThing($.parseJSON(e.data));
+                  // console.log(e.data);
+                  // Gauge.Collection.get('gauge1').setValue(data.speed);
+                  // Gauge.Collection.get('gauge2').setValue(data.rpm);
+                }
+              });
+        </script>
+    </body>
+</html>
