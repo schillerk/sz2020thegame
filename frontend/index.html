@@ -1,0 +1,263 @@
+<link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+<div class="command" id="command1"></div>
+<div class="command" id="command2"></div>
+<div class="command" id="command3"></div>
+<div class="command" id="command4"></div>
+<div class="command" id="command5"></div>
+<div class="command">
+	<span >You've failed</span>
+	<span id="hits">0</span>
+	<span >times</span>
+</div>
+<div class="action">
+	<label class="container">
+		<span class="action-label">
+		  DARK GRAVITY ACTUATOR
+		</span>
+	  <input type="checkbox" id="button1">
+	  <span class="checkmark"></span>
+	</label>
+</div>
+<div class="action">
+	<label class="container">
+		<span class="action-label">
+		  SPECTROBOLT
+		</span>
+	  <input type="checkbox" id="button2">
+	  <span class="checkmark"></span>
+	</label>
+</div>
+<div class="action">
+	<label class="container">
+		<span class="action-label">
+			EIGENTHROTTLE
+		</span>
+	  <input type="checkbox" id="button3">
+	  <span class="checkmark"></span>
+	</label>
+</div>
+<div class="action">
+	<label class="container">
+		<span class="action-label">
+			SUSPEND DISBELIEF
+		</span>
+	  <input type="checkbox" id="button4">
+	  <span class="checkmark"></span>
+	</label>
+</div>
+<div id="timer">
+</div>
+<style>
+	#timer {
+		opacity: 0;
+		height: 20px;
+		width: 500px;
+		background-color: red;
+		border-radius: 3px;
+		border: 1px solid black;
+	}
+
+	.action {
+		font-family: 'Monoton', cursive;
+		height: 75px;
+		text-align: center;
+	}
+
+	.action-label {
+		left: 15px;
+		top: 9px;
+		position: relative;
+		z-index: 10;
+
+	}
+
+	.command {
+		font-family: 'Press Start 2P', cursive;
+		margin-bottom: 20px;
+	}
+
+	/* Customize the label (the container) */
+	.container {
+	  display: block;
+	  position: relative;
+	  margin-bottom: 12px;
+	  cursor: pointer;
+	  font-size: 22px;
+	  -webkit-user-select: none;
+	  -moz-user-select: none;
+	  -ms-user-select: none;
+	  user-select: none;
+	  width: 420px;
+	}
+
+	/* Hide the browser's default checkbox */
+	.container input {
+	  position: absolute;
+	  opacity: 0;
+	  cursor: pointer;
+	}
+
+	/* Create a custom checkbox */
+	.checkmark {
+	  position: absolute;
+	  top: 0;
+	  left: 10px;
+	  height: 44px;
+	  width: 420px;
+	  background-color: #ccc;
+	  z-index: 1;
+	  border: 3px solid black;
+	  border-radius: 5px;
+	}
+
+	/* On mouse-over, add a grey background color */
+	.container:hover input ~ .checkmark {
+	  background-color: #ccddcc;
+	}
+
+	/* When the checkbox is checked, add a blue background */
+	.container input:checked ~ .checkmark {
+	  background-color: lightgreen;
+	}
+
+	/* Create the checkmark/indicator (hidden when not checked) */
+	.checkmark:after {
+	  content: "";
+	  position: absolute;
+	  display: none;
+	}
+
+	/* Show the checkmark when checked */
+	.container input:checked ~ .checkmark:after {
+	  display: block;
+	}
+
+	 Style the checkmark/indicator
+	.container .checkmark:after {
+	  left: 9px;
+	  top: 5px;
+	  width: 5px;
+	  height: 10px;
+	  border: solid white;
+	  border-width: 0 3px 3px 0;
+	  -webkit-transform: rotate(45deg);
+	  -ms-transform: rotate(45deg);
+	  transform: rotate(45deg);
+	}
+</style>
+<script>
+	var initialTime = new Date().getTime();
+	var timeLimit = 2000;
+	var buttonMap = {
+		1: 'DARK GRAVITY ACTUATOR',
+		2: 'SPECTROBOLT',
+		3: 'EIGENTHROTTLE',
+		4: 'SUSPEND DISBELIEF',
+	}
+	var commands = [
+		[true, false, false, false],
+		[true, true, false, false],
+		[true, true, true, false],
+		[true, false, true, false],
+		[false, false, false, false],
+	];
+	var current = 0;
+	var commandStartTime = new Date().getTime()
+
+	function setEl(id, value) {
+		document.getElementById(id).innerHTML = value;
+	}
+
+	function getEl(id) {
+		return document.getElementById(id).checked;
+	}
+
+	function getState() {
+		return [getEl('button1'), getEl('button2'), getEl('button3'), getEl('button4')];
+	}
+
+	function parseCommand(arr) {
+		var output = [];
+		for (i = 0; i < arr.length; i++) {
+			output.push("set " + buttonMap[i] + " to " + arr[i] + "\n");
+		}
+		return output;
+	}
+
+	function isGood() {
+		var state = getState();
+		var failed = false;
+		for (i = 0; i < commands[current].length; i++) {
+			if (commands[current][i] != state[i]) {
+				failed = true;
+			}
+		}
+		return !failed;
+	}
+
+	function printCommands() {
+		var arr = parseCommand(commands[current])
+		for (i = 0; i < arr.length; i++) {
+			setEl('command' + (i+1), arr[i]);
+		}
+	}
+
+	var loop = setInterval(function() {
+		if (current < commands.length) {
+			var currentTime = new Date().getTime();
+			var totalTimePassed = new Date().getTime() - initialTime;
+			// var commandTimePassed = new Date().getTime() - initialTime;
+			// current = Math.floor(totalTimePassed / time) -1;
+			printCommands();
+
+			if (current > -1 && isGood()) {
+				current += 1;
+				commandStartTime = new Date().getTime();
+				console.log('good');
+			}
+
+			if (current > -1 && currentTime - commandStartTime > timeLimit) {
+				current += 1;
+				commandStartTime = new Date().getTime();
+				console.log('bad');
+			}
+		} else {
+			console.log('congratulations!!!!!!')
+			clearInterval(loop);
+		}
+	}, 100);
+
+	// var initialTime = new Date().getTime();
+	// var times = [2000, 5000, 8000, 10000, 20000];
+	// var commands = [1, 0, 1, 0, 1];
+	// var current = 0;
+	// var timeToNext = times[1] - times[0];
+	// var commandTime = new Date().getTime();
+	// // var hasExecuted = true;
+	// setInterval(function() {
+	// 	var newTime = new Date().getTime();
+	// 	if (current < times.length && newTime - initialTime > times[0]) {
+	// 		var state = document.getElementById("button").checked;
+	// 		if (state == commands[current]) {
+	// 			console.log('good');
+	// 		}
+
+	// 		if (newTime - initialTime > times[current+1]) {
+	// 			document.getElementById("command").innerHTML = commands[current+1];
+	// 			document.getElementById("timer").style.width = "500px";
+	// 			document.getElementById("timer").style.opacity = "1";
+	// 			commandTime = new Date().getTime();
+	// 			timeToNext = times[current+1] - times[current];
+	// 			current += 1;
+	// 			// if (!hasExecuted) {
+	// 			// 	console.log('FAILURE');
+	// 			// }
+	// 			// hasExecuted == false;
+	// 		}
+	// 		// var timeSince = new Date().getTime() - commandTime;
+	// 		var timeSince = new Date().getTime() - initialTime - times[current-1];
+	// 		document.getElementById("timer").style.width = 500 * (1-timeSince/timeToNext) + "px";
+	// 	}
+	// }, 100);
+</script>
